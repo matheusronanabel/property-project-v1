@@ -3,14 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -18,10 +21,16 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'role_id',
+        'first_name',
+        'last_name',
+        'email_address',
+        'phone_number',
         'password',
+        'email_verified_at',
     ];
+
+    public $timestamps = true;
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,5 +53,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the role associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function role(): HasOne
+    {
+        return $this->hasOne(UserRole::class, 'id', 'role_id');
     }
 }
